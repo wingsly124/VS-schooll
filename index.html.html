@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vs School · SMK MERBAU</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--panel:rgba(18,32,64,.72);--line:rgba(90,140,220,.22);--text:#e8f1ff;--muted:#8fa6c8;--dim:#5f7a9e;--accent:#2f7bff;--accent2:#22d3ee}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#050b1a;color:var(--text);line-height:1.6;font-size:15px;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(900px 600px at 10% -10%,rgba(47,123,255,.18),transparent 60%),radial-gradient(700px 500px at 100% 0%,rgba(34,211,238,.10),transparent 55%),linear-gradient(160deg,#050b1a,#081326 55%,#050b1a)}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:15px}
+.screen{display:none;min-height:100vh}.screen.active{display:block}
+#scr-splash{display:none;place-items:center;min-height:100vh;text-align:center}
+#scr-splash.active{display:grid}
+.splash-logo{font-size:64px;animation:pop .8s}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.splash-title{font-size:44px;font-weight:800;letter-spacing:-1.5px;margin:10px 0 0;background:linear-gradient(120deg,#fff,#7fb0ff 60%,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+.splash-sub{font-size:13px;letter-spacing:4px;color:var(--accent2);margin-top:6px;font-weight:700}
+.splash-cn{font-size:17px;color:#9fc5ff;margin-top:6px}
+.splash-school{font-size:12px;letter-spacing:2px;color:var(--muted);margin-top:22px;padding:6px 14px;border:1px solid var(--line);border-radius:99px;display:inline-block}
+.spinner{width:30px;height:30px;border:3px solid rgba(90,140,220,.2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:34px auto 0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.splash-studio{font-size:11px;color:var(--dim);letter-spacing:2px;margin-top:16px}
+.auth-lang{position:fixed;top:14px;right:14px;z-index:50;display:flex;gap:5px;background:rgba(8,18,38,.8);padding:4px;border-radius:11px;border:1px solid var(--line);backdrop-filter:blur(12px)}
+.auth-lang button{padding:7px 12px;border-radius:8px;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.auth-lang button.on{background:linear-gradient(135deg,rgba(47,123,255,.35),rgba(34,211,238,.2));color:#fff}
+.auth-wrap{display:flex;min-height:100vh;max-width:1200px;margin:0 auto}
+.auth-brand{flex:1;padding:60px 48px;display:flex;flex-direction:column;justify-content:center}
+.auth-brand .b-logo{font-size:52px}
+.auth-brand h1{font-size:40px;font-weight:800;letter-spacing:-1.5px;margin:12px 0 0;background:linear-gradient(120deg,#fff,#7fb0ff 60%,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+.auth-brand .b-sub{font-size:12px;letter-spacing:3px;color:var(--accent2);font-weight:700;margin-top:4px}
+.auth-brand .b-cn{font-size:16px;color:#9fc5ff;margin-top:6px}
+.auth-brand ul{list-style:none;padding:0;margin:32px 0 0}
+.auth-brand li{padding:13px 0;border-bottom:1px solid var(--line);color:#c3d4ec;font-size:14px;display:flex;gap:10px;align-items:flex-start}
+.auth-brand li::before{content:'▸';color:var(--accent2);font-weight:800}
+.auth-form{flex:1;padding:60px 48px;display:flex;flex-direction:column;justify-content:center;max-width:520px;margin:0 auto;width:100%}
+.auth-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:28px;backdrop-filter:blur(14px)}
+.auth-tabs{display:flex;gap:6px;background:rgba(8,18,38,.7);padding:5px;border-radius:12px;margin-bottom:22px}
+.auth-tabs button{flex:1;padding:10px;border-radius:9px;font-size:14px;font-weight:700;color:var(--muted)}
+.auth-tabs button.on{background:linear-gradient(135deg,#2f7bff,#22d3ee);color:#fff;box-shadow:0 4px 14px rgba(47,123,255,.35)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;border-radius:12px;background:rgba(8,18,38,.85);border:1px solid var(--line);color:var(--text);outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,123,255,.18)}
+.field textarea{resize:vertical;min-height:96px}
+.btn{padding:13px 20px;border-radius:12px;font-size:14.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.18s}
+.btn-primary{background:linear-gradient(135deg,#2f7bff,#22d3ee);color:#fff;box-shadow:0 6px 20px rgba(47,123,255,.3)}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-ghost{background:rgba(90,140,220,.1);border:1px solid var(--line);color:var(--text)}
+.btn-ghost:hover{background:rgba(90,140,220,.2)}
+.btn-full{width:100%}
+.verify-box{background:rgba(8,18,38,.7);border:1px dashed rgba(90,140,220,.35);border-radius:12px;padding:14px;margin-bottom:14px}
+.verify-box .v-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px}
+.verify-box .v-row{display:flex;gap:10px;align-items:center}
+.verify-box .v-q{flex:1;font-size:16px;font-weight:800;color:var(--accent2);background:rgba(34,211,238,.08);padding:9px 12px;border-radius:9px;text-align:center}
+.verify-box input{width:90px;text-align:center;font-weight:800}
+.err{font-size:12.5px;color:#ff8fa3;margin-top:8px;min-height:17px}
+.hint{font-size:11.5px;color:var(--dim);margin-top:14px;line-height:1.6;text-align:center}
+.role-pick{display:flex;gap:10px}
+.role-pick button{flex:1;padding:14px 10px;border-radius:12px;border:1px solid var(--line);background:rgba(8,18,38,.6);font-size:13.5px;font-weight:700;color:var(--muted)}
+.role-pick button.on{border-color:var(--accent);background:rgba(47,123,255,.16);color:#fff}
+.role-pick button:disabled{opacity:.35;cursor:not-allowed}
+.role-pick .sub{display:block;font-size:10.5px;font-weight:500;margin-top:3px;color:var(--dim)}
+.appbar{position:sticky;top:0;z-index:40;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:rgba(6,14,30,.86);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.appbar-left{display:flex;align-items:center;gap:11px}
+.appbar-left .logo{font-size:23px}
+.app-name{font-size:15.5px;font-weight:800;line-height:1.15}
+.app-school{font-size:10px;letter-spacing:1.6px;color:var(--dim);font-weight:700}
+.appbar-right{display:flex;align-items:center;gap:9px}
+.lang-mini{display:flex;gap:3px;background:rgba(8,18,38,.7);padding:3px;border-radius:9px;border:1px solid var(--line)}
+.lang-mini button{padding:5px 9px;border-radius:7px;font-size:11px;font-weight:700;color:var(--muted)}
+.lang-mini button.on{background:rgba(47,123,255,.3);color:#fff}
+.user-chip{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:99px;background:rgba(47,123,255,.12);border:1px solid rgba(47,123,255,.3);font-size:12.5px;font-weight:700;max-width:180px}
+.user-chip .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-chip .rl{font-size:10px;padding:1px 7px;border-radius:99px;background:rgba(34,211,238,.2);color:#7fe7f7;flex-shrink:0}
+.icon-btn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(90,140,220,.1);border:1px solid var(--line);font-size:15px}
+.icon-btn:hover{background:rgba(90,140,220,.24)}
+.app-body{display:flex;min-height:calc(100vh - 60px)}
+.appnav{width:222px;flex-shrink:0;padding:16px 12px;border-right:1px solid var(--line);background:rgba(6,14,30,.45)}
+.appnav a{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:11px;color:#a9bdd8;text-decoration:none;font-size:13.5px;font-weight:600;margin-bottom:3px;cursor:pointer;border:1px solid transparent}
+.appnav a:hover{background:rgba(90,140,220,.12);color:#fff}
+.appnav a.on{background:linear-gradient(135deg,rgba(47,123,255,.28),rgba(34,211,238,.14));color:#fff;border-color:rgba(47,123,255,.4)}
+.appmain{flex:1;padding:26px 30px;max-width:1080px;min-width:0}
+@media(max-width:800px){.app-body{flex-direction:column}.appnav{width:100%;display:flex;overflow-x:auto;gap:6px;padding:10px;border-right:none;border-bottom:1px solid var(--line)}.appnav a{white-space:nowrap;margin:0;padding:9px 13px;font-size:12.5px}.appmain{padding:18px 15px}.app-school{display:none}.user-chip{max-width:120px}.auth-brand{display:none}.auth-form{padding:80px 20px 40px;max-width:100%}}
+.page-title{font-size:25px;font-weight:800;letter-spacing:-.6px;margin:0 0 4px}
+.page-sub{font-size:13px;color:var(--muted);margin:0 0 22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;backdrop-filter:blur(10px);margin-bottom:14px}
+.card h3{margin:0 0 12px;font-size:15px;font-weight:800;color:#cfe0ff}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;backdrop-filter:blur(10px)}
+.stat .n{font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.stat .l{font-size:11.5px;color:var(--muted);margin-top:5px;font-weight:600}
+.stat.blue .n{color:#7fb0ff}.stat.yellow .n{color:#ffc76b}.stat.green .n{color:#66e29a}.stat.red .n{color:#ff8fa3}
+.hero{background:linear-gradient(135deg,rgba(47,123,255,.2),rgba(34,211,238,.08));border:1px solid rgba(47,123,255,.3);border-radius:18px;padding:22px;margin-bottom:18px}
+.hero h2{margin:0 0 6px;font-size:20px;font-weight:800}
+.hero p{margin:0 0 14px;font-size:13.5px;color:#c3d4ec}
+.quick{display:flex;gap:9px;flex-wrap:wrap}
+.quick button{padding:10px 16px;border-radius:11px;font-size:13px;font-weight:700;background:rgba(8,18,38,.7);border:1px solid var(--line)}
+.quick button:hover{border-color:var(--accent);background:rgba(47,123,255,.15)}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700}
+.badge.pending{background:rgba(255,176,32,.18);color:#ffc76b}
+.badge.review{background:rgba(47,123,255,.2);color:#7fb0ff}
+.badge.resolved{background:rgba(34,197,94,.18);color:#66e29a}
+.badge.closed{background:rgba(143,166,200,.18);color:#a9bdd8}
+.badge.low{background:rgba(34,197,94,.16);color:#66e29a}
+.badge.mid{background:rgba(255,176,32,.16);color:#ffc76b}
+.badge.high{background:rgba(255,84,112,.18);color:#ff8fa3}
+.badge.critical{background:rgba(255,84,112,.3);color:#ffb3c1}
+.badge.info{background:rgba(34,211,238,.18);color:#7fe7f7}
+.empty{text-align:center;padding:44px 20px;color:var(--dim);font-size:13.5px}
+.empty .ic{font-size:42px;display:block;margin-bottom:12px;opacity:.5}
+.list-item{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:11px;cursor:pointer;transition:.16s}
+.list-item:hover{border-color:rgba(47,123,255,.45);transform:translateY(-1px)}
+.li-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.li-code{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--accent2);font-weight:700}
+.li-desc{font-size:13.5px;color:#c3d4ec;margin-bottom:8px;line-height:1.6}
+.li-meta{font-size:11.5px;color:var(--dim);display:flex;gap:14px;flex-wrap:wrap}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.row{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 12px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--line);background:rgba(8,18,38,.6)}
+td{padding:11px 12px;border-bottom:1px solid rgba(90,140,220,.09);color:#c3d4ec}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(47,123,255,.05)}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 190px);min-height:400px;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.chat-head{padding:14px 18px;border-bottom:1px solid var(--line);background:rgba(8,18,38,.6);display:flex;justify-content:space-between;align-items:center}
+.chat-head h3{margin:0;font-size:15px;font-weight:800}
+.chat-head p{margin:3px 0 0;font-size:12px;color:var(--muted)}
+.chat-badge{font-size:10px;padding:3px 8px;border-radius:99px;background:rgba(34,211,238,.15);color:#7fe7f7;font-weight:700}
+.chat-body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:82%;padding:12px 15px;border-radius:16px;font-size:14px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.msg.ai{align-self:flex-start;background:rgba(47,123,255,.13);border:1px solid rgba(47,123,255,.25);border-bottom-left-radius:5px}
+.msg.me{align-self:flex-end;background:linear-gradient(135deg,rgba(47,123,255,.9),rgba(34,211,238,.75));color:#fff;border-bottom-right-radius:5px}
+.msg.crisis{align-self:flex-start;background:rgba(255,84,112,.16);border:1px solid rgba(255,84,112,.5);border-bottom-left-radius:5px;color:#ffd5dd}
+.chat-input{display:flex;gap:9px;padding:13px;border-top:1px solid var(--line);background:rgba(8,18,38,.6)}
+.chat-input input{flex:1;padding:12px 15px;border-radius:12px;background:rgba(8,18,38,.9);border:1px solid var(--line);color:var(--text);outline:none}
+.chat-input input:focus{border-color:var(--accent)}
+.chat-input button{padding:0 20px;border-radius:12px;background:linear-gradient(135deg,#2f7bff,#22d3ee);color:#fff;font-weight:700;font-size:14px}
+.typing{align-self:flex-start;padding:12px 18px;color:var(--muted);font-size:13px;letter-spacing:3px}
+.suggest{display:flex;gap:7px;flex-wrap:wrap;padding:0 13px 13px}
+.suggest button{padding:7px 13px;border-radius:99px;font-size:12px;background:rgba(90,140,220,.1);border:1px solid var(--line);color:#a9bdd8}
+.suggest button:hover{border-color:var(--accent);color:#fff}
+.modal{position:fixed;inset:0;background:rgba(3,7,16,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:200;padding:18px}
+.modal.on{display:flex}
+.modal-box{background:#0d1a33;border:1px solid var(--line);border-radius:18px;padding:24px;max-width:600px;width:100%;max-height:88vh;overflow-y:auto}
+.modal-box h2{margin:0 0 6px;font-size:20px;font-weight:800}
+.modal-close{position:absolute;top:14px;right:14px}
+.test-prog{height:6px;background:rgba(90,140,220,.15);border-radius:99px;overflow:hidden;margin-bottom:8px}
+.test-prog i{display:block;height:100%;background:linear-gradient(90deg,#2f7bff,#22d3ee);transition:width .35s;border-radius:99px}
+.opt{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:13px;background:rgba(8,18,38,.7);border:1px solid var(--line);margin-bottom:9px;cursor:pointer;font-size:14px}
+.opt:hover{border-color:rgba(47,123,255,.5);background:rgba(47,123,255,.08)}
+.opt.on{border-color:var(--accent);background:rgba(47,123,255,.18);font-weight:700}
+.opt .dot{width:20px;height:20px;border-radius:50%;border:2px solid rgba(90,140,220,.5);flex-shrink:0}
+.opt.on .dot{border-color:var(--accent);background:var(--accent);box-shadow:inset 0 0 0 3px #0d1a33}
+.dim-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(90,140,220,.08)}
+.dim-row:last-child{border-bottom:none}
+.dim-name{flex:1;font-size:13.5px}
+.dim-bar{width:64px;height:7px;background:rgba(90,140,220,.15);border-radius:99px;overflow:hidden;flex-shrink:0}
+.dim-bar i{display:block;height:100%;border-radius:99px}
+.score-card{border-radius:18px;padding:24px;margin-bottom:18px}
+.score-big{font-size:46px;font-weight:800;letter-spacing:-2px;line-height:1}
+.score-big small{font-size:18px;color:rgba(255,255,255,.45);font-weight:600}
+.lock-card{text-align:center;padding:36px 26px;max-width:460px;margin:40px auto}
+.lock-card .ic{font-size:48px;margin-bottom:14px;animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.7}50%{opacity:1}}
+.countdown{font-size:26px;font-weight:800;font-family:ui-monospace,Menlo,monospace;color:var(--accent);margin:12px 0}
+</style>
+</head>
+<body>
+
+<div class="screen active" id="scr-splash">
+  <div>
+    <div class="splash-logo">🛡️</div>
+    <h1 class="splash-title">Vs School</h1>
+    <div class="splash-sub">VIGILANCE &amp; SAFETY</div>
+    <div class="splash-cn">守护平安校园</div>
+    <div class="splash-school">SMK MERBAU</div>
+    <div class="spinner"></div>
+    <div class="splash-studio">WG STUDIO</div>
+  </div>
+</div>
+
+<div class="screen" id="scr-auth">
+  <div class="auth-lang" id="authLang"></div>
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <div class="b-logo">🛡️</div>
+      <h1>Vs School</h1>
+      <div class="b-sub">VIGILANCE &amp; SAFETY</div>
+      <div class="b-cn">守护平安校园</div>
+      <ul id="brandList"></ul>
+    </div>
+    <div class="auth-form">
+      <div class="auth-card">
+        <div class="auth-tabs" id="authTabs"></div>
+        <div id="authBody"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="scr-app">
+  <header class="appbar">
+    <div class="appbar-left">
+      <span class="logo">🛡️</span>
+      <div>
+        <div class="app-name">Vs School</div>
+        <div class="app-school">SMK MERBAU</div>
+      </div>
+    </div>
+    <div class="appbar-right">
+      <div class="lang-mini" id="langMini"></div>
+      <div class="user-chip">
+        <span class="nm" id="chipName"></span>
+        <span class="rl" id="chipRole"></span>
+      </div>
+      <button class="icon-btn" id="btnLogout" title="Logout">⏻</button>
+    </div>
+  </header>
+  <div class="app-body">
+    <aside class="appnav" id="appnav"></aside>
+    <main class="appmain" id="appmain"></main>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box" style="position:relative" id="modalBox"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL  = 'https://vksppfbrujzgkaspedom.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrc3BwZmJydWp6Z2thc3BlZG9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNDMwNTAsImV4cCI6MjEwNzYxOTA1MH0.UCB2n6eSzggjHvteKrFZmAhaqmjBKQ3W9ohwuyuyf78';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const I18N = {
+en:{login:'Login',register:'Register',signIn:'Sign in',createAccount:'Create account',email:'Gmail address',password:'Password',confirmPwd:'Confirm password',fullName:'Full name',className:'Class (e.g. 3A)',role:'I am a',student:'Student',teacher:'Teacher',loginSub:'Sign in with your school Gmail account',regSub:'Register with your school Gmail account',verify:'Human verification',verifyWrong:'Incorrect. Try again.',teacherLocked:'Teacher accounts are created by the school administrator only.',errEmail:'Please enter your Gmail address',errGmail:'Only @gmail.com addresses are allowed',errPwd:'Please enter your password',errPwdLen:'Password must be at least 8 characters',errPwdMatch:'Passwords do not match',errName:'Please enter your full name',errClass:'Please enter your class',errExists:'This Gmail is already registered',errCred:'Incorrect Gmail or password',errFill:'Please fill in all required fields',brand1:'Private, secure reporting for students',brand2:'AI trained only on school safety issues',brand3:'Teachers respond and track every case',brand4:'Free mental-health check every 12 hours',navHome:'Home',navAI:'Safety AI',navReport:'Submit Report',navMine:'My Reports',navTest:'Mental Check',navRes:'Help Resources',navDash:'Analytics',navStudents:'Registered Students',navReports:'Report Management',navAssess:'Mental Health Reports',hello:'Hello',heroSub:'This is your safe, private space. If anything is troubling you, you can speak here.',quickChat:'Talk to Safety AI',quickReport:'Submit a report',quickTest:'Mental check',statTotal:'My reports',statPending:'Pending',statReview:'In review',statResolved:'Resolved',recent:'Recent reports',noReports:'No reports yet',chatTitle:'Safety AI Companion',chatSub:'Only for campus safety topics · Private · Only you can see this',chatPh:'Describe what happened…',send:'Send',chatWelcome:'Hello. I am the Vs School Safety AI. I only handle campus safety matters — bullying, harassment, cyberbullying, threats, discrimination and personal safety. Tell me what happened.',sug1:'Someone is bullying me',sug2:'I was harassed',sug3:'Someone threatens me online',sug4:'I feel unsafe at school',reportTitle:'Submit a Report',reportSub:'Only the description is required. Everything else is optional.',fType:'Type of incident',fSev:'Severity',fDesc:'What happened',fPeople:'People involved',fPlace:'Location',fCount:'Number of people',fClass:'Class',optional:'optional',anonymous:'Submit anonymously',submit:'Submit report',close:'Close',reportDone:'Report submitted',yourCode:'Your report number',tBully:'Bullying',tCyber:'Cyberbullying',tEmotion:'Emotional distress',tHarass:'Harassment',tSafety:'Physical safety threat',tFamily:'Family issue',tOther:'Other',sLow:'Minor',sMid:'Moderate',sHigh:'Serious',sCritical:'Critical',stPending:'Pending',stReview:'In review',stResolved:'Resolved',stClosed:'Closed',mineTitle:'My Reports',mineSub:'Track progress of every report you submitted',timeline:'Timeline',evCreated:'Report submitted',evClaimed:'Claimed by teacher',evStatus:'Status changed',evNote:'Teacher note',evReply:'Your reply',testTitle:'Mental Health Check',testSub:'20 questions generated for you · Every 12 hours',testStart:'Start the check',testLocked:'You just completed a check',testLockNote:'Repeating the check will not make the result more accurate.',viewLast:'View last result',backHome:'Back to home',qOf:'Question',prev:'Previous',next:'Next',submitTest:'Submit',analyzing:'Analysing your answers…',pleaseWait:'This may take a moment',resultTitle:'Your result',dimBreak:'Dimension breakdown',advice:'Suggestions',urgent:'If you need help right now',notDiag:'This is not a diagnosis. It only helps you understand how you have been lately.',resTitle:'Help Resources',resSub:'If you or someone else is in danger, call immediately',resCall:'Tap to call',forceTitle:'Mental health check required',forceMsg:'SMK Merbau requires all students to complete the mental health check. It takes about 3 minutes.',forceStart:'Start now',later:'Later',dashTitle:'Analytics',dashSub:'SMK Merbau · Live overview',studentsTitle:'Registered Students',studentsSub:'All accounts registered in this school',reportsTitle:'Report Management',reportsSub:'Review, respond and update every report',assessTitle:'Mental Health Reports',assessSub:'Check results submitted by students',colName:'Name',colEmail:'Gmail',colClass:'Class',colDate:'Registered',colScore:'Score',colLevel:'Level',colStatus:'Status',updateStatus:'Update status',sendToStudent:'Message the student',msgPh:'Write a message to the student…',save:'Save',sendMsg:'Send message',noStudents:'No students registered yet',noAssess:'No mental health reports yet',aiOnly:'I can only help with campus safety topics — bullying, harassment, cyberbullying, threats, discrimination, or personal safety.',genTest:'AI is generating your questions…'},
+zh:{login:'登录',register:'注册',signIn:'登录',createAccount:'创建账号',email:'Gmail 邮箱',password:'密码',confirmPwd:'确认密码',fullName:'姓名',className:'班级（例：3A）',role:'我的身份是',student:'学生',teacher:'老师',loginSub:'使用你的学校 Gmail 账号登录',regSub:'使用 Gmail 账号注册',verify:'人机验证',verifyWrong:'答案不正确，请重试。',teacherLocked:'老师账号仅由学校管理员在后台创建。',errEmail:'请输入 Gmail 邮箱',errGmail:'只允许使用 @gmail.com 邮箱',errPwd:'请输入密码',errPwdLen:'密码至少需要 8 位',errPwdMatch:'两次输入的密码不一致',errName:'请输入姓名',errClass:'请输入班级',errExists:'这个 Gmail 已经被注册过了',errCred:'Gmail 或密码错误',errFill:'请填写所有必填项',brand1:'为学生提供私密、安全的举报通道',brand2:'AI 只专注校园安全议题',brand3:'老师实时处理并跟进每一个案件',brand4:'每 12 小时可进行一次心理健康自检',navHome:'首页',navAI:'安全 AI',navReport:'提交举报',navMine:'我的举报',navTest:'心理检测',navRes:'求助资源',navDash:'数据分析',navStudents:'注册名单',navReports:'举报管理',navAssess:'心理报告',hello:'你好',heroSub:'这里是你安全、私密的空间。遇到任何让你不舒服的事，都可以说出来。',quickChat:'和安全 AI 聊聊',quickReport:'提交举报',quickTest:'心理检测',statTotal:'我的举报',statPending:'待处理',statReview:'处理中',statResolved:'已解决',recent:'最近举报',noReports:'还没有举报记录',chatTitle:'安全 AI 伙伴',chatSub:'仅处理校园安全议题 · 私密 · 只有你能看到',chatPh:'描述发生了什么…',send:'发送',chatWelcome:'你好，我是 Vs School 安全 AI。我只处理校园安全相关的事——霸凌、骚扰、网络霸凌、威胁、歧视和人身安全。告诉我发生了什么，我会一步步帮你。',sug1:'有人欺负我',sug2:'我被骚扰了',sug3:'有人在网上威胁我',sug4:'我在学校觉得不安全',reportTitle:'提交举报',reportSub:'只有「发生了什么」是必填，其他都可以留空。',fType:'事件类型',fSev:'严重程度',fDesc:'发生了什么',fPeople:'涉及人员',fPlace:'地点',fCount:'人数',fClass:'班级',optional:'选填',anonymous:'匿名提交',submit:'提交举报',close:'关闭',reportDone:'举报已提交',yourCode:'你的举报编号',tBully:'校园霸凌',tCyber:'网络霸凌',tEmotion:'情绪困扰',tHarass:'骚扰 / 性骚扰',tSafety:'人身安全威胁',tFamily:'家庭问题',tOther:'其他',sLow:'轻微',sMid:'中等',sHigh:'严重',sCritical:'紧急',stPending:'待处理',stReview:'处理中',stResolved:'已解决',stClosed:'已关闭',mineTitle:'我的举报',mineSub:'查看每一份举报的处理进度',timeline:'处理时间线',evCreated:'提交举报',evClaimed:'老师已认领',evStatus:'状态变更',evNote:'老师处理记录',evReply:'你的回复',testTitle:'心理健康检测',testSub:'AI 生成 20 道题 · 每 12 小时一次',testStart:'开始检测',testLocked:'你刚刚完成了检测',testLockNote:'重复检测不会让结果更准确。给自己一点时间。',viewLast:'查看上次结果',backHome:'返回首页',qOf:'第',prev:'上一题',next:'下一题',submitTest:'提交',analyzing:'AI 正在分析你的答案…',pleaseWait:'请稍候',resultTitle:'你的结果',dimBreak:'各维度得分',advice:'建议',urgent:'如果你现在需要帮助',notDiag:'这不是心理诊断，只是帮助你了解自己最近的状态。',resTitle:'求助资源',resSub:'如果你或他人正处于危险中，请立刻拨打',resCall:'点击拨号',forceTitle:'需要完成心理健康检测',forceMsg:'SMK Merbau 要求所有学生完成心理健康检测。大约需要 3 分钟。',forceStart:'立即开始',later:'稍后',dashTitle:'数据分析',dashSub:'SMK Merbau · 实时总览',studentsTitle:'注册名单',studentsSub:'本校所有已注册账号',reportsTitle:'举报管理',reportsSub:'查看、回复并更新每一份举报',assessTitle:'心理报告',assessSub:'学生提交的检测结果',colName:'姓名',colEmail:'Gmail',colClass:'班级',colDate:'注册时间',colScore:'得分',colLevel:'等级',colStatus:'状态',updateStatus:'更新状态',sendToStudent:'发消息给学生',msgPh:'写给学生的消息…',save:'保存',sendMsg:'发送消息',noStudents:'还没有学生注册',noAssess:'还没有心理检测报告',aiOnly:'我只能协助校园安全相关的事——霸凌、骚扰、网络霸凌、威胁、歧视或人身安全。',genTest:'AI 正在为你出题…'},
+ms:{login:'Log masuk',register:'Daftar',signIn:'Log masuk',createAccount:'Cipta akaun',email:'Alamat Gmail',password:'Kata laluan',confirmPwd:'Sahkan kata laluan',fullName:'Nama penuh',className:'Kelas (cth. 3A)',role:'Saya seorang',student:'Pelajar',teacher:'Guru',loginSub:'Log masuk dengan akaun Gmail sekolah anda',regSub:'Daftar dengan akaun Gmail anda',verify:'Pengesahan manusia',verifyWrong:'Jawapan salah. Sila cuba lagi.',teacherLocked:'Akaun guru hanya dicipta oleh pentadbir sekolah.',errEmail:'Sila masukkan alamat Gmail anda',errGmail:'Hanya alamat @gmail.com dibenarkan',errPwd:'Sila masukkan kata laluan',errPwdLen:'Kata laluan sekurang-kurangnya 8 aksara',errPwdMatch:'Kata laluan tidak sepadan',errName:'Sila masukkan nama penuh',errClass:'Sila masukkan kelas',errExists:'Gmail ini sudah didaftarkan',errCred:'Gmail atau kata laluan salah',errFill:'Sila isi semua ruangan',brand1:'Saluran laporan peribadi dan selamat untuk pelajar',brand2:'AI yang hanya fokus pada keselamatan sekolah',brand3:'Guru menyahut dan memantau setiap kes',brand4:'Semakan kesihatan mental percuma setiap 12 jam',navHome:'Utama',navAI:'AI Keselamatan',navReport:'Buat Laporan',navMine:'Laporan Saya',navTest:'Semakan Mental',navRes:'Bantuan',navDash:'Analitik',navStudents:'Senarai Pelajar',navReports:'Pengurusan Laporan',navAssess:'Laporan Mental',hello:'Hai',heroSub:'Ini ruang anda yang selamat dan peribadi.',quickChat:'Bercakap dengan AI',quickReport:'Buat laporan',quickTest:'Semakan mental',statTotal:'Laporan saya',statPending:'Menunggu',statReview:'Dalam tindakan',statResolved:'Selesai',recent:'Laporan terkini',noReports:'Belum ada laporan',chatTitle:'Rakan AI Keselamatan',chatSub:'Hanya isu keselamatan sekolah · Peribadi',chatPh:'Ceritakan apa yang berlaku…',send:'Hantar',chatWelcome:'Hai. Saya AI Keselamatan Vs School. Saya hanya mengendalikan isu keselamatan sekolah — buli, gangguan, buli siber, ancaman, diskriminasi dan keselamatan diri.',sug1:'Ada orang buli saya',sug2:'Saya diganggu',sug3:'Ada orang ancam saya dalam talian',sug4:'Saya rasa tidak selamat di sekolah',reportTitle:'Buat Laporan',reportSub:'Hanya penerangan diperlukan.',fType:'Jenis insiden',fSev:'Tahap',fDesc:'Apa yang berlaku',fPeople:'Orang terlibat',fPlace:'Lokasi',fCount:'Bilangan',fClass:'Kelas',optional:'pilihan',anonymous:'Hantar tanpa nama',submit:'Hantar laporan',close:'Tutup',reportDone:'Laporan dihantar',yourCode:'Nombor laporan anda',tBully:'Buli',tCyber:'Buli siber',tEmotion:'Tekanan emosi',tHarass:'Gangguan',tSafety:'Ancaman keselamatan',tFamily:'Masalah keluarga',tOther:'Lain-lain',sLow:'Ringan',sMid:'Sederhana',sHigh:'Serius',sCritical:'Kritikal',stPending:'Menunggu',stReview:'Dalam tindakan',stResolved:'Selesai',stClosed:'Ditutup',mineTitle:'Laporan Saya',mineSub:'Pantau kemajuan setiap laporan anda',timeline:'Garis masa',evCreated:'Laporan dihantar',evClaimed:'Diambil oleh guru',evStatus:'Status berubah',evNote:'Catatan guru',evReply:'Balasan anda',testTitle:'Semakan Kesihatan Mental',testSub:'AI menjana 20 soalan · Setiap 12 jam',testStart:'Mula semakan',testLocked:'Anda baru selesai semakan',testLockNote:'Mengulang semakan tidak menjadikan hasil lebih tepat.',viewLast:'Lihat hasil lepas',backHome:'Kembali ke utama',qOf:'Soalan',prev:'Sebelum',next:'Seterusnya',submitTest:'Hantar',analyzing:'Sedang menganalisis…',pleaseWait:'Sila tunggu',resultTitle:'Keputusan anda',dimBreak:'Pecahan dimensi',advice:'Cadangan',urgent:'Jika anda perlukan bantuan sekarang',notDiag:'Ini bukan diagnosis.',resTitle:'Sumber Bantuan',resSub:'Jika anda dalam bahaya, hubungi segera',resCall:'Ketik untuk hubungi',forceTitle:'Semakan kesihatan mental diperlukan',forceMsg:'SMK Merbau mewajibkan semua pelajar melengkapkan semakan.',forceStart:'Mula sekarang',later:'Kemudian',dashTitle:'Analitik',dashSub:'SMK Merbau · Gambaran keseluruhan',studentsTitle:'Senarai Pelajar',studentsSub:'Semua akaun berdaftar',reportsTitle:'Pengurusan Laporan',reportsSub:'Semak, balas dan kemas kini',assessTitle:'Laporan Kesihatan Mental',assessSub:'Keputusan semakan pelajar',colName:'Nama',colEmail:'Gmail',colClass:'Kelas',colDate:'Didaftar',colScore:'Skor',colLevel:'Tahap',colStatus:'Status',updateStatus:'Kemas kini status',sendToStudent:'Hantar mesej kepada pelajar',msgPh:'Tulis mesej…',save:'Simpan',sendMsg:'Hantar mesej',noStudents:'Belum ada pelajar',noAssess:'Belum ada laporan mental',aiOnly:'Saya hanya boleh membantu isu keselamatan sekolah.',genTest:'AI sedang menjana soalan…'}
+};
+
+let state = { lang: localStorage.getItem('vs_lang') || (function(){const n=(navigator.language||'en').toLowerCase();if(n.startsWith('zh'))return 'zh';if(n.startsWith('ms'))return 'ms';return 'en';})(), screen:'splash', user:null, authTab:'login', view:'home', verify:{a:0,b:0}, chat:[], test:null, lastResult:null, forceShown:false, aiOnline:true };
+function t(k, vars){let s=(I18N[state.lang]&&I18N[state.lang][k])||I18N.en[k]||k;if(vars)for(const kk in vars)s=s.replace('{'+kk+'}',vars[kk]);return s;}
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const AI_TOPICS = [
+  {id:'crisis',risk:3,kw:['不想活','自杀','自残','割腕','想死','结束生命','跳楼','伤害自己','活不下去','kill myself','suicide','want to die','self harm','nak mati','bunuh diri','tak mahu hidup']},
+  {id:'harass',risk:3,kw:['性骚扰','猥亵','摸我','偷拍','裸照','非礼','sexual harassment','molest','groped','touched me','nude photo','gangguan seksual','dicabul']},
+  {id:'threat',risk:2,kw:['威胁','恐吓','勒索','抢钱','要打我','threaten','blackmail','extort','ugut','ancam']},
+  {id:'cyber',risk:2,kw:['网络霸凌','网暴','假账号','被P图','被冒充','cyberbully','fake account','buli siber','akaun palsu']},
+  {id:'bully',risk:2,kw:['霸凌','欺凌','欺负','被打','被骂','被推','被踢','排挤','孤立','嘲笑','侮辱','bully','bullied','hit me','buli','dibuli','dipukul']},
+  {id:'discrim',risk:1,kw:['歧视','看不起','种族','宗教','肤色','discriminate','racist','diskriminasi']},
+  {id:'emotion',risk:1,kw:['难过','伤心','哭','抑郁','低落','崩溃','孤独','寂寞','很累','烦','空虚','sad','depressed','cry','lonely','sedih','menangis','penat']},
+  {id:'anxiety',risk:1,kw:['焦虑','紧张','害怕','恐惧','恐慌','睡不着','失眠','压力大','anxious','nervous','scared','panic','cemas','takut','risau']},
+  {id:'safety',risk:1,kw:['不安全','危险','有人跟踪','陌生人','unsafe','dangerous','stranger','tidak selamat','bahaya']}
+];
+function detectTopic(text){const s=String(text||'').toLowerCase();let best=null,bs=0;for(const tp of AI_TOPICS){let sc=0;for(const kw of tp.kw){if(s.includes(kw.toLowerCase()))sc+=kw.length>3?2:1.2;}if(sc>bs){bs=sc;best=tp;}}return bs>=1.2?best:null;}
+
+async function aiRespond(text){
+  const tp = detectTopic(text);
+  try{
+    const history = state.chat.filter(m => !(m.role==='ai' && m.text===t('chatWelcome'))).map(m => ({ role: m.role==='me' ? 'user' : 'assistant', content: m.text }));
+    history.push({ role:'user', content: text });
+    const { data, error } = await sb.functions.invoke('bright-responder', { body: { messages: history, lang: state.lang } });
+    if(error) throw error;
+    const reply = (typeof data === 'string' ? JSON.parse(data) : data)?.reply;
+    if(!reply) throw new Error('Empty reply');
+    state.aiOnline = true;
+    return { text: reply, risk: tp?.risk ?? 0 };
+  } catch(e){
+    console.error('ai-chat failed:', e);
+    state.aiOnline = false;
+    if(!tp) return { text: t('aiOnly'), risk: 0 };
+    return { text: localReply(tp), risk: tp.risk };
+  }
+}
+function localReply(tp){
+  const map = {
+    crisis:{zh:'我听到你了。请现在就打 999 或 15999 Talian Kasih（24 小时免费），并告诉一位你信任的大人。这不是你的错。',en:'I hear you. Please call 999 or 15999 Talian Kasih (24h free) now, and tell a trusted adult.',ms:'Saya dengar awak. Sila hubungi 999 atau 15999 Talian Kasih sekarang.'},
+    harass:{zh:'这不是你的错。先确保自己安全，保留证据，立刻告诉学校辅导老师。涉及身体接触可打 999。',en:'This is not your fault. Get to safety, keep evidence, tell the school counsellor.',ms:'Ini bukan salah awak. Pastikan selamat dan laporkan kepada kaunselor.'},
+    threat:{zh:'被威胁是严重的事。不要正面冲突，记录所有细节，今天就告诉老师。危险时打 999。',en:'Being threatened is serious. Do not confront, record everything, tell a teacher.',ms:'Ancaman adalah serius. Jangan berdepan, beritahu guru.'},
+    cyber:{zh:'截图保存所有内容，不要回复，封锁对方。给老师或家长看。',en:'Screenshot everything, do not reply, block them.',ms:'Tangkap layar, jangan balas, blok.'},
+    bully:{zh:'被欺负不是你的错。记下发生的事，截图保存，告诉一个你信任的大人，并在 App 里提交举报。',en:'Being bullied is not your fault. Write it down, tell an adult, submit a report.',ms:'Dibuli bukan salah awak. Buat laporan dalam aplikasi ini.'},
+    discrim:{zh:'因为你的身份被不公平对待是不能接受的。记下细节，报告给辅导老师。',en:'Being treated unfairly is not acceptable. Report it.',ms:'Dilayan tidak adil tidak boleh diterima. Laporkan.'},
+    emotion:{zh:'谢谢你愿意说出来。试试慢慢呼吸（吸4停4呼6），今天找一个人说说话。',en:'Thank you for saying it. Try slow breathing, talk to one person.',ms:'Terima kasih. Cuba bernafas perlahan.'},
+    anxiety:{zh:'焦虑会过去的。试试 4-7-8 呼吸，说出你看到的 5 样东西。',en:'Anxiety passes. Try 4-7-8 breathing.',ms:'Kebimbangan akan berlalu. Cuba pernafasan 4-7-8.'},
+    safety:{zh:'感到不安全是学校必须认真处理的事。记下细节，告诉老师。危险时打 999。',en:'Feeling unsafe must be taken seriously. Tell a teacher.',ms:'Rasa tidak selamat mesti diambil serius. Beritahu guru.'}
+  };
+  const r = map[tp.id] || {zh:t('aiOnly'),en:t('aiOnly'),ms:t('aiOnly')};
+  return r[state.lang] || r.en;
+}
+
+const DIM_ORDER = ['emotion','sleep','appetite','energy','social','academic','family','self_esteem','anxiety','interest','physical','concentration','exercise','screen','safety','bullying','support','hope','relaxation','help_seeking'];
+const DIM_NAMES = {emotion:['情绪','Emotional state','Emosi'],sleep:['睡眠','Sleep','Tidur'],appetite:['食欲','Appetite','Selera'],energy:['精力','Energy','Tenaga'],social:['社交','Social','Sosial'],academic:['学业','Academic','Akademik'],family:['家庭','Family','Keluarga'],self_esteem:['自我认同','Self-esteem','Harga diri'],anxiety:['焦虑','Anxiety','Kebimbangan'],interest:['兴趣','Interest','Minat'],physical:['身体症状','Physical','Fizikal'],concentration:['注意力','Concentration','Tumpuan'],exercise:['运动','Exercise','Senaman'],screen:['屏幕时间','Screen','Skrin'],safety:['安全感','Safety','Selamat'],bullying:['被霸凌','Bullying','Dibuli'],support:['支持系统','Support','Sokongan'],hope:['希望','Hope','Harapan'],relaxation:['放松','Relaxation','Relaks'],help_seeking:['求助意愿','Help-seeking','Bantuan']};
+const DIM_ICON = {emotion:'😊',sleep:'😴',appetite:'🍽️',energy:'⚡',social:'👥',academic:'📚',family:'🏠',self_esteem:'🪞',anxiety:'😰',interest:'🎨',physical:'🩺',concentration:'🎯',exercise:'🏃',screen:'📱',safety:'🛡️',bullying:'⚠️',support:'🤝',hope:'🌱',relaxation:'🧘',help_seeking:'💬'};
+
+async function generateTest(){
+  try{
+    const { data, error } = await sb.functions.invoke('smooth-endpoint', { body: { lang: state.lang } });
+    if(error) throw error;
+    const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+    if(parsed.questions && parsed.questions.length === 20){
+      return parsed.questions.map((q,i)=>({ id:'q_'+i, dim:q.dim, name: DIM_NAMES[q.dim]?.[state.lang==='zh'?0:state.lang==='ms'?2:1] || q.dim, q:q.q, opts:q.opts }));
+    }
+    throw new Error('Bad format');
+  }catch(e){
+    console.warn('ai-test failed, using local fallback:', e);
+    return generateTestLocal();
+  }
+}
+const LOCAL_Q = {emotion:{zh:'最近两周，你心情低落的频率是？',en:'How often have you felt down in the past two weeks?',ms:'Berapa kerap anda rasa sedih?'},sleep:{zh:'最近两周，你睡不好的频率是？',en:'How often did you sleep poorly?',ms:'Berapa kerap anda tidur tidak lena?'},appetite:{zh:'最近两周，你食欲变化的频率是？',en:'How often has your appetite changed?',ms:'Berapa kerap selera anda berubah?'},energy:{zh:'最近两周，你没精神的频率是？',en:'How often have you felt low on energy?',ms:'Berapa kerap anda kurang tenaga?'},social:{zh:'最近两周，你和同学疏远的频率是？',en:'How often have you felt distant from classmates?',ms:'Berapa kerap anda rasa jauh dari kawan?'},academic:{zh:'最近两周，学业压力的频率是？',en:'How often has schoolwork stressed you?',ms:'Berapa kerap pelajaran menekan anda?'},family:{zh:'最近两周，家里让你难受的频率是？',en:'How often has home felt difficult?',ms:'Berapa kerap rumah terasa susah?'},self_esteem:{zh:'最近两周，你觉得自己不够好的频率是？',en:'How often have you felt not good enough?',ms:'Berapa kerap anda rasa tidak cukup baik?'},anxiety:{zh:'最近两周，你紧张不安的频率是？',en:'How often have you felt nervous?',ms:'Berapa kerap anda rasa cemas?'},interest:{zh:'最近两周，你对喜欢的事失去兴趣的频率是？',en:'How often did you lose interest?',ms:'Berapa kerap anda hilang minat?'},physical:{zh:'最近两周，你头痛或胃痛的频率是？',en:'How often did you have headaches?',ms:'Berapa kerap anda sakit kepala?'},concentration:{zh:'最近两周，你难以集中注意力的频率是？',en:'How often did you struggle to concentrate?',ms:'Berapa kerap anda sukar tumpu?'},exercise:{zh:'最近两周，你几乎不运动的频率是？',en:'How often did you get no exercise?',ms:'Berapa kerap anda tidak bersenam?'},screen:{zh:'最近两周，你熬夜刷手机的频率是？',en:'How often did you stay up on your phone?',ms:'Berapa kerap anda berjaga malam main telefon?'},safety:{zh:'最近两周，你在学校感到不安全的频率是？',en:'How often have you felt unsafe at school?',ms:'Berapa kerap anda rasa tidak selamat?'},bullying:{zh:'最近两周，你被欺负或排挤的频率是？',en:'How often were you bullied?',ms:'Berapa kerap anda dibuli?'},support:{zh:'最近两周，你觉得没人倾诉的频率是？',en:'How often did you feel you had no one to talk to?',ms:'Berapa kerap tiada siapa boleh didengari?'},hope:{zh:'最近两周，你觉得未来没希望的频率是？',en:'How often did the future feel hopeless?',ms:'Berapa kerap masa depan tiada harapan?'},relaxation:{zh:'最近两周，你无法放松的频率是？',en:'How often were you unable to relax?',ms:'Berapa kerap anda tidak boleh relaks?'},help_seeking:{zh:'最近两周，你不愿求助的频率是？',en:'How often did you avoid asking for help?',ms:'Berapa kerap anda elak minta bantuan?'}};
+function generateTestLocal(){
+  const opts = state.lang==='zh'?['完全没有','偶尔','经常','几乎每天']:state.lang==='ms'?['Langsung tidak','Kadang','Kerap','Hampir setiap hari']:['Not at all','Sometimes','Often','Almost every day'];
+  const qs = DIM_ORDER.map(d=>({id:'q_'+d, dim:d, name: DIM_NAMES[d][state.lang==='zh'?0:state.lang==='ms'?2:1], q: LOCAL_Q[d][state.lang] || LOCAL_Q[d].en, opts}));
+  for(let i=qs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[qs[i],qs[j]]=[qs[j],qs[i]];}
+  return qs;
+}
+function analyzeTest(qs, ans){
+  const dims = qs.map((q,i)=>({dim:q.dim,name:q.name,score:ans[i]||0,max:3}));
+  const total = dims.reduce((a,b)=>a+b.score,0);
+  let level,label;
+  if(total<=15){level='good';label=state.lang==='zh'?'整体良好':state.lang==='ms'?'Keseluruhan baik':'Overall good';}
+  else if(total<=30){level='moderate';label=state.lang==='zh'?'整体一般，有部分需要关注':state.lang==='ms'?'Biasa dengan beberapa kebimbangan':'Okay with some concerns';}
+  else if(total<=45){level='low';label=state.lang==='zh'?'整体偏低，建议寻求支持':state.lang==='ms'?'Rendah — pertimbang sokongan':'Low — consider support';}
+  else{level='high';label=state.lang==='zh'?'整体较低，请找人聊聊':state.lang==='ms'?'Sangat rendah — sila bercakap dengan seseorang':'Very low — please talk to someone';}
+  dims.sort((a,b)=>b.score-a.score);
+  return {total,max:60,level,label,dims,at:Date.now()};
+}
+
+function showScreen(n){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const el = $('scr-'+n); if(el) el.classList.add('active'); state.screen=n; window.scrollTo(0,0); }
+function newVerify(){ return {a:Math.floor(Math.random()*8)+2,b:Math.floor(Math.random()*8)+2}; }
+
+function renderAuth(){
+  const langs=[['zh','华文'],['en','English'],['ms','Bahasa Melayu']];
+  $('authLang').innerHTML = langs.map(([k,l])=>`<button data-lang="${k}" class="${state.lang===k?'on':''}">${l}</button>`).join('');
+  $('authLang').querySelectorAll('button').forEach(b=>{ b.onclick=()=>{ state.lang=b.dataset.lang; localStorage.setItem('vs_lang',state.lang); renderAll(); }; });
+  $('brandList').innerHTML = ['brand1','brand2','brand3','brand4'].map(k=>`<li>${t(k)}</li>`).join('');
+  $('authTabs').innerHTML = `<button data-tab="login" class="${state.authTab==='login'?'on':''}">${t('login')}</button><button data-tab="register" class="${state.authTab==='register'?'on':''}">${t('register')}</button>`;
+  $('authTabs').querySelectorAll('button').forEach(b=>{ b.onclick=()=>{ state.authTab=b.dataset.tab; state.verify=newVerify(); renderAuth(); }; });
+  const v = state.verify;
+  const vh = `<div class="verify-box"><div class="v-title">🔒 ${t('verify')}</div><div class="v-row"><div class="v-q">${v.a} + ${v.b} = ?</div><input id="verifyInput" inputmode="numeric" placeholder="?" maxlength="3"></div></div>`;
+  if(state.authTab==='login'){
+    $('authBody').innerHTML = `<p style="font-size:13px;color:var(--muted);margin:0 0 18px">${t('loginSub')}</p><div class="field"><label>${t('email')}</label><input id="liEmail" type="email" placeholder="yourname@gmail.com"></div><div class="field"><label>${t('password')}</label><input id="liPwd" type="password" placeholder="••••••••"></div>${vh}<div class="err" id="authErr"></div><button class="btn btn-primary btn-full" id="btnLogin" style="margin-top:8px">${t('signIn')}</button><div class="hint">SMK Merbau</div>`;
+    $('btnLogin').onclick = doLogin;
+    $('liPwd').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+    $('verifyInput').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  } else {
+    $('authBody').innerHTML = `<p style="font-size:13px;color:var(--muted);margin:0 0 18px">${t('regSub')}</p><div class="field"><label>${t('fullName')}</label><input id="rgName" placeholder="Ahmad Bin Ali"></div><div class="field"><label>${t('email')}</label><input id="rgEmail" type="email" placeholder="yourname@gmail.com"></div><div class="field"><label>${t('className')}</label><input id="rgClass" placeholder="3A"></div><div class="field"><label>${t('password')}</label><input id="rgPwd" type="password" placeholder="••••••••"></div><div class="field"><label>${t('confirmPwd')}</label><input id="rgPwd2" type="password" placeholder="••••••••"></div><div class="field"><label>${t('role')}</label><div class="role-pick"><button data-role="student" class="on">🎓 ${t('student')}</button><button data-role="teacher" disabled title="${t('teacherLocked')}">👨‍🏫 ${t('teacher')}<span class="sub">${t('teacherLocked').slice(0,28)}…</span></button></div></div>${vh}<div class="err" id="authErr"></div><button class="btn btn-primary btn-full" id="btnReg" style="margin-top:8px">${t('createAccount')}</button><div class="hint">${t('teacherLocked')}</div>`;
+    $('btnReg').onclick = doRegister;
+    $('rgPwd2').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
+  }
+}
+async function doLogin(){
+  const email = ($('liEmail').value||'').trim().toLowerCase();
+  const pwd = $('liPwd').value||'';
+  const vv = ($('verifyInput').value||'').trim();
+  const err = $('authErr'); const show = m => err.textContent = m;
+  if(!email) return show(t('errEmail'));
+  if(!email.endsWith('@gmail.com')) return show(t('errGmail'));
+  if(!pwd) return show(t('errPwd'));
+  if(vv !== String(state.verify.a+state.verify.b)){ state.verify=newVerify(); renderAuth(); return setTimeout(()=>{$('authErr').textContent=t('verifyWrong');},10); }
+  show('Signing in…');
+  const {data, error} = await sb.auth.signInWithPassword({email, password:pwd});
+  if(error) return show(t('errCred'));
+  const {data:prof, error:pErr} = await sb.from('profiles').select('*').eq('id', data.user.id).single();
+  if(pErr || !prof) return show('Profile not found. Contact admin.');
+  state.user = {id:prof.id, name:prof.name, email:prof.email, role:prof.role, className:prof.class_name};
+  await enterApp();
+}
+async function doRegister(){
+  const name = ($('rgName').value||'').trim();
+  const email = ($('rgEmail').value||'').trim().toLowerCase();
+  const cls = ($('rgClass').value||'').trim();
+  const pwd = $('rgPwd').value||'';
+  const pwd2 = $('rgPwd2').value||'';
+  const vv = ($('verifyInput').value||'').trim();
+  const err = $('authErr'); const show = m => err.textContent = m;
+  if(!name) return show(t('errName'));
+  if(!email) return show(t('errEmail'));
+  if(!email.endsWith('@gmail.com')) return show(t('errGmail'));
+  if(!cls) return show(t('errClass'));
+  if(pwd.length<8) return show(t('errPwdLen'));
+  if(pwd!==pwd2) return show(t('errPwdMatch'));
+  if(vv !== String(state.verify.a+state.verify.b)){ state.verify=newVerify(); renderAuth(); return setTimeout(()=>{$('authErr').textContent=t('verifyWrong');},10); }
+  show('Creating account…');
+  const {data, error} = await sb.auth.signUp({email, password:pwd, options:{data:{name, role:'student', class_name:cls}}});
+  if(error){ if(error.message.toLowerCase().includes('already')) return show(t('errExists')); return show(error.message); }
+  if(!data.user) return show('Sign up failed. Try again.');
+  if(!data.session) return show('Registered. Please check your Gmail to confirm, then sign in.');
+  const { error: pInsErr } = await sb.from('profiles').upsert({ id: data.user.id, email: email, name: name, role: 'student', class_name: cls }, { onConflict: 'id' });
+  if(pInsErr) console.warn('profile upsert:', pInsErr);
+  let { data: prof } = await sb.from('profiles').select('*').eq('id', data.user.id).maybeSingle();
+  if(!prof){ await new Promise(r=>setTimeout(r, 600)); const retry = await sb.from('profiles').select('*').eq('id', data.user.id).maybeSingle(); prof = retry.data; }
+  if(!prof) return show('Profile creation failed. Contact admin.');
+  state.user = {id: prof.id, name: prof.name, email: prof.email, role: prof.role, className: prof.class_name};
+  await enterApp();
+}
+async function doLogout(){ await sb.auth.signOut(); state.user=null; state.verify=newVerify(); showScreen('auth'); renderAuth(); }
+
+async function enterApp(){
+  state.view = state.user.role==='teacher' ? 'dash' : 'home';
+  state.chat = [{role:'ai', text:t('chatWelcome'), risk:0}];
+  showScreen('app');
+  await renderApp();
+  if(state.user.role==='student') maybeForceTest();
+}
+function renderAll(){ if(state.screen==='auth') renderAuth(); else if(state.screen==='app') renderApp(); }
+async function renderApp(){
+  if(!state.user) return;
+  $('chipName').textContent = state.user.name;
+  $('chipRole').textContent = state.user.role==='teacher'?t('teacher'):t('student');
+  const langs=[['zh','华'],['en','EN'],['ms','BM']];
+  $('langMini').innerHTML = langs.map(([k,l])=>`<button data-lang="${k}" class="${state.lang===k?'on':''}">${l}</button>`).join('');
+  $('langMini').querySelectorAll('button').forEach(b=>{ b.onclick=()=>{ state.lang=b.dataset.lang; localStorage.setItem('vs_lang',state.lang); renderApp(); }; });
+  const isT = state.user.role==='teacher';
+  const nav = isT
+    ? [['dash','📊',t('navDash')],['students','👥',t('navStudents')],['reports','📋',t('navReports')],['assess','🧠',t('navAssess')]]
+    : [['home','🏠',t('navHome')],['ai','🛡️',t('navAI')],['report','📝',t('navReport')],['mine','📁',t('navMine')],['test','🧠',t('navTest')],['res','📚',t('navRes')]];
+  $('appnav').innerHTML = nav.map(([k,ic,lb])=>`<a data-view="${k}" class="${state.view===k?'on':''}">${ic} ${lb}</a>`).join('');
+  $('appnav').querySelectorAll('a').forEach(a=>{ a.onclick=()=>{ state.view=a.dataset.view; renderApp(); }; });
+  $('btnLogout').onclick = doLogout;
+  await renderView();
+}
+async function renderView(){
+  const v = state.view;
+  const map = {home:viewStudentHome, ai:viewAI, report:viewReport, mine:viewMine, test:viewTest, res:viewRes, dash:viewDash, students:viewStudents, reports:viewTeacherReports, assess:viewAssess};
+  await (map[v]||viewStudentHome)();
+}
+
+async function fetchMyReports(){ const {data} = await sb.from('reports').select('*').eq('student_id', state.user.id).order('created_at',{ascending:false}); return data||[]; }
+async function fetchAllReports(){ const {data} = await sb.from('reports').select('*').order('created_at',{ascending:false}); return data||[]; }
+async function fetchEvents(reportId){ const {data} = await sb.from('report_events').select('*').eq('report_id', reportId).order('created_at',{ascending:true}); return data||[]; }
+async function fetchAssessments(studentId){ let q = sb.from('assessments').select('*').order('created_at',{ascending:false}); if(studentId) q = q.eq('student_id', studentId); const {data} = await q; return data||[]; }
+async function fetchStudents(){ const {data} = await sb.from('profiles').select('*').eq('role','student').order('created_at',{ascending:false}); return data||[]; }
+
+function emptyBox(ic,txt){ return `<div class="empty"><span class="ic">${ic}</span>${esc(txt)}</div>`; }
+function sevClass(s){ return s==='low'?'low':s==='mid'?'mid':s==='high'?'high':'critical'; }
+function stClass(s){ return s==='pending'?'pending':s==='review'?'review':s==='resolved'?'resolved':'closed'; }
+const TYPE_KEY = {bully:'tBully',cyber:'tCyber',emotion:'tEmotion',harass:'tHarass',safety:'tSafety',family:'tFamily',other:'tOther'};
+const ST_KEY = {pending:'stPending',review:'stReview',resolved:'stResolved',closed:'stClosed'};
+const SV_KEY = {low:'sLow',mid:'sMid',high:'sHigh',critical:'sCritical'};
+function reportCard(r){
+  return `<div class="list-item" data-report="${r.id}"><div class="li-head"><span class="li-code">${esc(r.code)}</span><span><span class="badge ${stClass(r.status)}">${t(ST_KEY[r.status])}</span><span class="badge ${sevClass(r.severity)}">${t(SV_KEY[r.severity])}</span></span></div><div class="li-desc">${esc(t(TYPE_KEY[r.type]))} · ${esc((r.description||'').slice(0,120))}${(r.description||'').length>120?'…':''}</div><div class="li-meta"><span>🕒 ${new Date(r.created_at).toLocaleString()}</span>${r.assigned_name?`<span>👤 ${esc(r.assigned_name)}</span>`:''}</div></div>`;
+}
+function bindReportCards(){ document.querySelectorAll('[data-report]').forEach(el=>{ el.onclick = ()=> openReportDetail(el.dataset.report); }); }
+
+async function viewStudentHome(){
+  const rs = await fetchMyReports();
+  const p = rs.filter(r=>r.status==='pending').length;
+  const rv = rs.filter(r=>r.status==='review').length;
+  const ok = rs.filter(r=>r.status==='resolved').length;
+  $('appmain').innerHTML = `<div class="hero"><h2>${t('hello')}, ${esc(state.user.name.split(' ')[0])} 👋</h2><p>${t('heroSub')}</p><div class="quick"><button data-go="ai">🛡️ ${t('quickChat')}</button><button data-go="report">📝 ${t('quickReport')}</button><button data-go="test">🧠 ${t('quickTest')}</button></div></div><div class="stats"><div class="stat blue"><div class="n">${rs.length}</div><div class="l">${t('statTotal')}</div></div><div class="stat yellow"><div class="n">${p}</div><div class="l">${t('statPending')}</div></div><div class="stat blue"><div class="n">${rv}</div><div class="l">${t('statReview')}</div></div><div class="stat green"><div class="n">${ok}</div><div class="l">${t('statResolved')}</div></div></div><h3 style="font-size:16px;margin:22px 0 12px">${t('recent')}</h3>${rs.length ? rs.slice(0,5).map(reportCard).join('') : emptyBox('📁', t('noReports'))}`;
+  $('appmain').querySelectorAll('[data-go]').forEach(b=>{ b.onclick=()=>{ state.view=b.dataset.go; renderApp(); }; });
+  bindReportCards();
+}
+async function viewMine(){
+  const rs = await fetchMyReports();
+  $('appmain').innerHTML = `<h1 class="page-title">${t('mineTitle')}</h1><p class="page-sub">${t('mineSub')}</p>${rs.length ? rs.map(reportCard).join('') : emptyBox('📁', t('noReports'))}`;
+  bindReportCards();
+}
+
+function viewAI(){
+  $('appmain').innerHTML = `<h1 class="page-title">${t('chatTitle')}</h1><p class="page-sub">${t('chatSub')}</p><div class="chat-wrap"><div class="chat-head"><div><h3>🛡️ Vs School Safety AI</h3><p>${t('chatSub')}</p></div><span class="chat-badge" id="aiBadge">${state.aiOnline?'DeepSeek':'Local'}</span></div><div class="chat-body" id="chatBody"></div><div class="suggest" id="suggest"><button>${t('sug1')}</button><button>${t('sug2')}</button><button>${t('sug3')}</button><button>${t('sug4')}</button></div><div class="chat-input"><input id="chatIn" placeholder="${t('chatPh')}" autocomplete="off"><button id="chatSend">${t('send')}</button></div></div>`;
+  drawChat();
+  $('chatSend').onclick = sendChat;
+  $('chatIn').addEventListener('keydown', e=>{ if(e.key==='Enter') sendChat(); });
+  $('suggest').querySelectorAll('button').forEach(b=>{ b.onclick = ()=>{ $('chatIn').value = b.textContent; sendChat(); }; });
+}
+function drawChat(){
+  const body = $('chatBody'); if(!body) return;
+  body.innerHTML = state.chat.map(m=>{ const cls = m.role==='me'?'me':(m.risk>=3?'ai crisis':'ai'); return `<div class="msg ${cls}">${esc(m.text)}</div>`; }).join('');
+  body.scrollTop = body.scrollHeight;
+  const badge = $('aiBadge'); if(badge) badge.textContent = state.aiOnline ? 'DeepSeek' : 'Local';
+}
+async function sendChat(){
+  const inp = $('chatIn'); const text = (inp.value||'').trim(); if(!text) return;
+  state.chat.push({role:'me', text}); inp.value=''; drawChat();
+  const body = $('chatBody');
+  const typing = document.createElement('div');
+  typing.className='typing'; typing.textContent='AI ···';
+  body.appendChild(typing); body.scrollTop = body.scrollHeight;
+  const res = await aiRespond(text);
+  typing.remove();
+  state.chat.push({role:'ai', text:res.text, risk:res.risk});
+  drawChat();
+}
+
+async function openReportDetail(id){
+  const {data:r} = await sb.from('reports').select('*').eq('id',id).single();
+  if(!r) return;
+  const evs = await fetchEvents(id);
+  const isTeacher = state.user.role==='teacher';
+  const isOwner = r.student_id===state.user.id;
+  const tl = evs.map(e=>{ const label = {created:t('evCreated'),claimed:t('evClaimed'),status:t('evStatus'),note:t('evNote'),reply:t('evReply')}[e.type]||e.type; return `<div style="padding:9px 0;border-bottom:1px solid rgba(90,140,220,.09)"><div style="font-size:12.5px;color:#7fb0ff;font-weight:700">${label}</div><div style="font-size:13px;color:#c3d4ec;margin-top:2px">${esc(e.content||'')}</div><div style="font-size:11px;color:var(--dim);margin-top:2px">${new Date(e.created_at).toLocaleString()}</div></div>`; }).join('') || `<div style="color:var(--dim);font-size:13px">—</div>`;
+  const teacherCtl = isTeacher ? `<div class="card" style="margin-top:16px"><h3>${t('updateStatus')}</h3><div class="field"><label>${t('colStatus')}</label><select id="mdStatus">${['pending','review','resolved','closed'].map(s=>`<option value="${s}" ${r.status===s?'selected':''}>${t(ST_KEY[s])}</option>`).join('')}</select></div><div class="field"><label>${t('sendToStudent')}</label><textarea id="mdMsg" placeholder="${t('msgPh')}"></textarea></div><div style="display:flex;gap:9px"><button class="btn btn-primary" id="mdSave">${t('save')}</button><button class="btn btn-ghost" id="mdSend">${t('sendMsg')}</button></div></div>` : '';
+  const studentReply = isOwner ? `<div class="field" style="margin-top:14px"><label>${t('evReply')}</label><textarea id="stuMsg"></textarea></div><button class="btn btn-primary" id="stuSend">${t('send')}</button>` : '';
+  openModal(`<h2>${esc(r.code)}</h2><div style="margin:8px 0 16px"><span class="badge ${stClass(r.status)}">${t(ST_KEY[r.status])}</span><span class="badge ${sevClass(r.severity)}">${t(SV_KEY[r.severity])}</span><span class="badge info">${t(TYPE_KEY[r.type])}</span></div><div class="card"><div style="font-size:13px;color:var(--muted);margin-bottom:6px">${t('fDesc')}</div><div style="font-size:14px;white-space:pre-wrap">${esc(r.description||'')}</div><div style="margin-top:14px;font-size:12.5px;color:var(--dim);display:flex;gap:16px;flex-wrap:wrap">${r.people?`<span>👥 ${esc(r.people)}</span>`:''}${r.place?`<span>📍 ${esc(r.place)}</span>`:''}${r.count?`<span>#️⃣ ${esc(r.count)}</span>`:''}${r.class_name?`<span>🏫 ${esc(r.class_name)}</span>`:''}<span>🕒 ${new Date(r.created_at).toLocaleString()}</span>${r.anonymous?'<span>🕶️ Anonymous</span>':''}</div></div><div class="card"><h3>${t('timeline')}</h3>${tl}</div>${teacherCtl}${studentReply}<div style="display:flex;justify-content:flex-end;margin-top:16px"><button class="btn btn-ghost" onclick="closeModal()">${t('close')}</button></div>`);
+  if(isTeacher){
+    $('mdSave').onclick = async ()=>{ const s = $('mdStatus').value; const upd = {status:s, updated_at:new Date().toISOString()}; if(!r.assigned_name){ upd.assigned_name = state.user.name; } await sb.from('reports').update(upd).eq('id', id); if(s !== r.status) await sb.from('report_events').insert({report_id:id, type:'status', content:t(ST_KEY[s]), by_name:state.user.name}); if(!r.assigned_name) await sb.from('report_events').insert({report_id:id, type:'claimed', content:t('evClaimed'), by_name:state.user.name}); closeModal(); renderApp(); };
+    $('mdSend').onclick = async ()=>{ const msg = ($('mdMsg').value||'').trim(); if(!msg) return; await sb.from('report_events').insert({report_id:id, type:'note', content:msg, by_name:state.user.name}); const upd = {updated_at:new Date().toISOString()}; if(r.status==='pending') upd.status='review'; if(!r.assigned_name) upd.assigned_name = state.user.name; await sb.from('reports').update(upd).eq('id', id); closeModal(); renderApp(); };
+  }
+  if(isOwner){
+    $('stuSend').onclick = async ()=>{ const msg = ($('stuMsg').value||'').trim(); if(!msg) return; await sb.from('report_events').insert({report_id:id, type:'reply', content:msg, by_name:state.user.name}); await sb.from('reports').update({updated_at:new Date().toISOString()}).eq('id', id); closeModal(); renderApp(); };
+  }
+}
+
+function viewReport(){
+  $('appmain').innerHTML = `<h1 class="page-title">${t('reportTitle')}</h1><p class="page-sub">${t('reportSub')}</p><div class="card"><div class="row"><div class="field"><label>${t('fType')}</label><select id="rType">${['bully','cyber','emotion','harass','safety','family','other'].map(k=>`<option value="${k}">${t(TYPE_KEY[k])}</option>`).join('')}</select></div><div class="field"><label>${t('fSev')}</label><select id="rSev">${['low','mid','high','critical'].map(k=>`<option value="${k}" ${k==='mid'?'selected':''}>${t(SV_KEY[k])}</option>`).join('')}</select></div></div><div class="field"><label>${t('fDesc')} *</label><textarea id="rDesc" placeholder="${t('fDesc')}…"></textarea></div><div class="row"><div class="field"><label>${t('fPeople')} (${t('optional')})</label><input id="rPeople"></div><div class="field"><label>${t('fPlace')} (${t('optional')})</label><input id="rPlace"></div></div><div class="row"><div class="field"><label>${t('fCount')} (${t('optional')})</label><input id="rCount" inputmode="numeric"></div><div class="field"><label>${t('fClass')} (${t('optional')})</label><input id="rClass" value="${esc(state.user.className||'')}"></div></div><label style="display:flex;align-items:center;gap:9px;font-size:13.5px;margin:6px 0 18px;cursor:pointer"><input type="checkbox" id="rAnon" style="width:auto"> ${t('anonymous')}</label><div class="err" id="rErr"></div><button class="btn btn-primary" id="rSubmit">${t('submit')}</button></div>`;
+  $('rSubmit').onclick = async ()=>{
+    const desc = ($('rDesc').value||'').trim();
+    if(!desc){ $('rErr').textContent = t('errFill'); return; }
+    const code = 'VS-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2,8).toUpperCase();
+    const {data:inserted, error} = await sb.from('reports').insert({code, student_id:state.user.id, anonymous: $('rAnon').checked, type: $('rType').value, severity: $('rSev').value, description: desc, people: ($('rPeople').value||'').trim(), place: ($('rPlace').value||'').trim(), count: ($('rCount').value||'').trim(), class_name: ($('rClass').value||'').trim(), status:'pending'}).select().single();
+    if(error){ $('rErr').textContent = error.message; return; }
+    await sb.from('report_events').insert({report_id:inserted.id, type:'created', content:t('evCreated'), by_name:state.user.name});
+    openModal(`<div style="text-align:center;padding:10px 0"><div style="font-size:52px">✅</div><h2 style="margin:12px 0 6px">${t('reportDone')}</h2><p style="color:var(--muted);font-size:13.5px;margin:0 0 16px">${t('yourCode')}</p><div style="font-family:ui-monospace,monospace;font-size:22px;font-weight:800;color:var(--accent2);background:rgba(34,211,238,.08);padding:14px;border-radius:12px;border:1px dashed rgba(34,211,238,.35)">${code}</div><button class="btn btn-primary btn-full" style="margin-top:20px" onclick="closeModal();state.view='mine';renderApp()">${t('navMine')}</button></div>`);
+  };
+}
+
+function viewRes(){
+  const items = [['🚨','999',state.lang==='zh'?'马来西亚紧急电话（警察 / 救护车 / 消防）':state.lang==='ms'?'Kecemasan Malaysia':'Malaysia emergency','999'],['💚','15999',state.lang==='zh'?'Talian Kasih · 24 小时免费求助热线':state.lang==='ms'?'Talian Kasih · 24 jam':'Talian Kasih · 24h toll-free','15999'],['🌙','03-7627 2929',state.lang==='zh'?'Befrienders KL · 24 小时情绪支援':state.lang==='ms'?'Befrienders KL · 24 jam':'Befrienders KL · 24h support','0376272929'],['🏫','',state.lang==='zh'?'学校辅导老师 / 训导处':state.lang==='ms'?'Kaunselor sekolah':'School counsellor','']];
+  $('appmain').innerHTML = `<h1 class="page-title">${t('resTitle')}</h1><p class="page-sub">${t('resSub')}</p>${items.map(([ic,num,desc,tel])=>`<a href="${tel?`tel:${tel}`:'#'}" style="text-decoration:none;color:inherit"><div class="card" style="display:flex;gap:14px;align-items:center"><div style="font-size:26px">${ic}</div><div style="flex:1"><div style="font-weight:800;font-size:15px">${num || (state.lang==='zh'?'学校辅导老师':'School counsellor')}</div><div style="font-size:12.5px;color:var(--muted)">${desc}</div></div>${tel?`<div class="badge info">${t('resCall')}</div>`:''}</div></a>`).join('')}`;
+}
+
+let lockTimer=null;
+async function testLockRemaining(){ const list = await fetchAssessments(state.user.id); if(!list.length) return 0; const last = new Date(list[0].created_at).getTime(); return Math.max(0, 12*60*60*1000 - (Date.now()-last)); }
+async function viewTest(){
+  const remain = await testLockRemaining();
+  if(remain>0){
+    const list = await fetchAssessments(state.user.id);
+    $('appmain').innerHTML = `<h1 class="page-title">${t('testTitle')}</h1><p class="page-sub">${t('testSub')}</p><div class="lock-card card"><div class="ic">🔒</div><h3 style="margin:0 0 8px;font-size:17px">${t('testLocked')}</h3><div class="countdown" id="cd">--:--</div><p style="font-size:13px;color:var(--muted);margin:0 0 20px">${t('testLockNote')}</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn btn-ghost" id="viewLast">${t('viewLast')}</button><button class="btn btn-ghost" onclick="goHome()">${t('backHome')}</button></div></div>`;
+    $('viewLast').onclick = ()=> showResult(list[0]);
+    startCountdown(remain); return;
+  }
+  if(lockTimer){ clearInterval(lockTimer); lockTimer=null; }
+  $('appmain').innerHTML = `<h1 class="page-title">${t('testTitle')}</h1><p class="page-sub">${t('testSub')}</p><div class="card" style="text-align:center;padding:40px 24px"><div style="font-size:52px;margin-bottom:14px">🧠</div><p style="font-size:14px;color:#c3d4ec;max-width:440px;margin:0 auto 24px;line-height:1.75">${t('forceMsg')}</p><button class="btn btn-primary" id="startTest">${t('testStart')}</button></div>`;
+  $('startTest').onclick = startTest;
+}
+function goHome(){ state.view='home'; renderApp(); }
+function startCountdown(ms){ let left = Math.floor(ms/1000); const el = $('cd'); const tick = ()=>{ if(!el) return; const m = Math.floor(left/60), s = left%60; el.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'); left--; if(left<0){ clearInterval(lockTimer); lockTimer=null; renderApp(); } }; tick(); lockTimer = setInterval(tick, 1000); }
+async function startTest(){
+  $('appmain').innerHTML = `<div class="card" style="text-align:center;padding:60px 24px"><div style="font-size:52px;margin-bottom:16px;animation:breathe 2s ease-in-out infinite">🧠</div><h3 style="margin:0 0 8px">${t('genTest')}</h3><p style="color:var(--muted);font-size:13.5px;margin:0">${t('pleaseWait')}</p><div class="spinner" style="margin-top:26px"></div></div>`;
+  const questions = await generateTest();
+  state.test = {questions, answers:[], index:0};
+  renderTestQ();
+}
+function renderTestQ(){
+  const T = state.test; const q = T.questions[T.index];
+  const total = T.questions.length; const pct = Math.round((T.index/total)*100);
+  const sel = T.answers[T.index];
+  $('appmain').innerHTML = `<div class="card"><div class="test-prog"><i style="width:${pct}%"></i></div><div style="font-size:11.5px;color:var(--dim);margin-bottom:18px">${t('qOf')} ${T.index+1} / ${total}</div><div style="font-size:11.5px;color:var(--accent2);font-weight:700;letter-spacing:.5px;margin-bottom:8px">${DIM_ICON[q.dim]} ${esc(q.name)}</div><div style="font-size:18px;font-weight:700;line-height:1.5;margin-bottom:22px">${esc(q.q)}</div><div id="opts">${q.opts.map((o,i)=>`<div class="opt ${sel===i?'on':''}" data-i="${i}"><span class="dot"></span><span>${esc(o)}</span></div>`).join('')}</div><div style="display:flex;gap:10px;margin-top:22px"><button class="btn btn-ghost" id="tPrev" ${T.index===0?'disabled':''}>← ${t('prev')}</button><button class="btn btn-primary" id="tNext" style="flex:1" ${sel==null?'disabled':''}>${T.index===total-1?t('submitTest'):t('next')} →</button></div></div>`;
+  $('opts').querySelectorAll('.opt').forEach(el=>{ el.onclick = ()=>{ T.answers[T.index] = parseInt(el.dataset.i,10); renderTestQ(); }; });
+  $('tPrev').onclick = ()=>{ if(T.index>0){ T.index--; renderTestQ(); } };
+  $('tNext').onclick = ()=>{ if(T.answers[T.index]==null) return; if(T.index===total-1) submitTest(); else { T.index++; renderTestQ(); } };
+}
+async function submitTest(){
+  const T = state.test;
+  $('appmain').innerHTML = `<div class="card" style="text-align:center;padding:60px 24px"><div style="font-size:52px;margin-bottom:16px;animation:breathe 2s ease-in-out infinite">📊</div><h3 style="margin:0 0 8px">${t('analyzing')}</h3><p style="color:var(--muted);font-size:13.5px;margin:0">${t('pleaseWait')}</p><div class="spinner" style="margin-top:26px"></div></div>`;
+  await new Promise(r=>setTimeout(r, 800));
+  const res = analyzeTest(T.questions, T.answers);
+  const {data:inserted, error} = await sb.from('assessments').insert({student_id:state.user.id, student_name: state.user.name, class_name: state.user.className || '', total: res.total, max:60, level: res.level, label: res.label, dims: res.dims}).select().single();
+  if(error){ alert(error.message); return; }
+  state.lastResult = inserted; state.test = null;
+  showResult(inserted);
+}
+function showResult(res){
+  if(!res) return;
+  const dims = res.dims || [];
+  const bg = {good:'linear-gradient(135deg,rgba(34,197,94,.22),rgba(34,211,238,.08))',moderate:'linear-gradient(135deg,rgba(47,123,255,.22),rgba(34,211,238,.08))',low:'linear-gradient(135deg,rgba(255,176,32,.22),rgba(255,84,112,.08))',high:'linear-gradient(135deg,rgba(255,84,112,.24),rgba(200,30,60,.12))'}[res.level];
+  const bd = {good:'rgba(34,197,94,.3)',moderate:'rgba(47,123,255,.3)',low:'rgba(255,176,32,.3)',high:'rgba(255,84,112,.4)'}[res.level];
+  const dimRows = dims.map(d=>{ const col = d.score>=3?'#ff5470':d.score===2?'#ffb020':'#22c55e'; return `<div class="dim-row"><div class="dim-name">${DIM_ICON[d.dim]||'•'} ${esc(d.name)}</div><div class="dim-bar"><i style="width:${(d.score/3)*100}%;background:${col}"></i></div><div style="font-size:12px;font-weight:700;color:${col};min-width:28px;text-align:right">${d.score}/3</div></div>`; }).join('');
+  const urgentNeeded = dims.some(d=>d.score>=3) || dims.some(d=>(d.dim==='bullying'||d.dim==='safety')&&d.score>=2);
+  $('appmain').innerHTML = `<h1 class="page-title">${t('resultTitle')}</h1><p class="page-sub">${new Date(res.created_at||res.at).toLocaleString()}</p><div class="score-card" style="background:${bg};border:1px solid ${bd}"><div class="score-big">${res.total}<small> / 60</small></div><div style="font-size:18px;font-weight:800;margin-top:8px">${esc(res.label)}</div><div style="font-size:13px;color:#c3d4ec;margin-top:10px;line-height:1.7">${t('notDiag')}</div></div><div class="card"><h3>${t('dimBreak')}</h3>${dimRows}</div>${urgentNeeded?`<div class="card" style="background:linear-gradient(135deg,rgba(255,84,112,.18),rgba(200,30,60,.08));border-color:rgba(255,84,112,.45)"><h3 style="color:#ff8fa3">🚨 ${t('urgent')}</h3><div style="font-size:13.5px;line-height:2"><a href="tel:999" style="color:#e8f1ff;text-decoration:none">📞 999 — Emergency</a><br><a href="tel:15999" style="color:#e8f1ff;text-decoration:none">📞 15999 — Talian Kasih</a><br><a href="tel:0376272929" style="color:#e8f1ff;text-decoration:none">📞 03-7627 2929 — Befrienders KL</a></div></div>`:''}<div class="card"><h3>${t('advice')}</h3><div style="font-size:13.5px;color:#c3d4ec;line-height:1.8">${state.lang==='zh'?'1. 试着固定作息时间。<br>2. 每天找一个人说几句话。<br>3. 如果情绪持续低落超过两周，请找学校辅导老师聊聊。<br>4. 遇到霸凌或骚扰，请使用本 App 的举报功能。':state.lang==='ms'?'1. Tetapkan masa tidur yang tetap.<br>2. Bercakap dengan seseorang setiap hari.<br>3. Jika berterusan lebih dua minggu, jumpa kaunselor.<br>4. Jika dibuli, guna fungsi laporan.':'1. Keep a consistent sleep schedule.<br>2. Talk to one person each day.<br>3. If low mood lasts over two weeks, speak to the counsellor.<br>4. If bullied or harassed, use the report function.'}</div></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-ghost" onclick="goHome()">${t('backHome')}</button><button class="btn btn-ghost" onclick="state.view='ai';renderApp()">🛡️ ${t('quickChat')}</button><button class="btn btn-ghost" onclick="state.view='report';renderApp()">📝 ${t('quickReport')}</button></div>`;
+}
+async function maybeForceTest(){
+  if(state.user.role!=='student') return;
+  if(state.forceShown) return;
+  const remain = await testLockRemaining();
+  if(remain>0) return;
+  state.forceShown = true;
+  setTimeout(()=>{ openModal(`<div style="text-align:center;padding:8px 0"><div style="font-size:48px">🧠</div><h2 style="margin:12px 0 10px">${t('forceTitle')}</h2><p style="font-size:13.5px;color:#c3d4ec;line-height:1.75;margin:0 0 22px">${t('forceMsg')}</p><div style="display:flex;gap:10px"><button class="btn btn-ghost" style="flex:1" onclick="closeModal()">${t('later')}</button><button class="btn btn-primary" style="flex:1" onclick="closeModal();state.view='test';renderApp()">${t('forceStart')}</button></div></div>`); }, 700);
+}
+
+async function viewDash(){
+  const students = await fetchStudents();
+  const rs = await fetchAllReports();
+  const as = await fetchAssessments();
+  const pending = rs.filter(r=>r.status==='pending').length;
+  const done = rs.filter(r=>r.status==='resolved').length;
+  const byType = {}; rs.forEach(r=>{ byType[r.type]=(byType[r.type]||0)+1; });
+  const maxType = Math.max(1, ...Object.values(byType));
+  const typeBars = Object.keys(byType).length ? Object.entries(byType).map(([k,v])=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px"><span>${t(TYPE_KEY[k]||'tOther')}</span><span style="color:var(--accent2);font-weight:700">${v}</span></div><div style="height:8px;background:rgba(90,140,220,.15);border-radius:99px;overflow:hidden"><div style="height:100%;width:${(v/maxType)*100}%;background:linear-gradient(90deg,#2f7bff,#22d3ee);border-radius:99px"></div></div></div>`).join('') : `<div style="color:var(--dim);font-size:13px">${t('noReports')}</div>`;
+  $('appmain').innerHTML = `<h1 class="page-title">${t('dashTitle')}</h1><p class="page-sub">${t('dashSub')}</p><div class="stats"><div class="stat blue"><div class="n">${students.length}</div><div class="l">${t('navStudents')}</div></div><div class="stat yellow"><div class="n">${pending}</div><div class="l">${t('statPending')}</div></div><div class="stat green"><div class="n">${done}</div><div class="l">${t('statResolved')}</div></div><div class="stat red"><div class="n">${as.length}</div><div class="l">${t('navAssess')}</div></div></div><div class="card"><h3>${t('fType')}</h3>${typeBars}</div><div class="card"><h3>${t('recent')}</h3>${rs.length ? rs.slice(0,5).map(r=>`<div style="padding:10px 0;border-bottom:1px solid rgba(90,140,220,.09);font-size:13px"><span class="li-code">${esc(r.code)}</span><span class="badge ${stClass(r.status)}" style="margin-left:8px">${t(ST_KEY[r.status])}</span><div style="color:var(--muted);font-size:12px;margin-top:4px">${r.anonymous?'🕶️ Anonymous':esc(r.student_name||'Student')} · ${new Date(r.created_at).toLocaleString()}</div></div>`).join('') : `<div style="color:var(--dim);font-size:13px">${t('noReports')}</div>`}</div>`;
+}
+async function viewStudents(){
+  const users = await fetchStudents();
+  $('appmain').innerHTML = `<h1 class="page-title">${t('studentsTitle')}</h1><p class="page-sub">${t('studentsSub')}</p>${users.length ? `<div class="table-wrap"><table><thead><tr><th>${t('colName')}</th><th>${t('colEmail')}</th><th>${t('colClass')}</th><th>${t('colDate')}</th></tr></thead><tbody>${users.map(u=>`<tr><td style="font-weight:700;color:#e8f1ff">${esc(u.name)}</td><td>${esc(u.email)}</td><td>${esc(u.class_name||'—')}</td><td style="color:var(--dim);font-size:12px">${new Date(u.created_at).toLocaleDateString()}</td></tr>`).join('')}</tbody></table></div>` : emptyBox('👥', t('noStudents'))}`;
+}
+async function viewTeacherReports(){
+  const rs = await fetchAllReports();
+  $('appmain').innerHTML = `<h1 class="page-title">${t('reportsTitle')}</h1><p class="page-sub">${t('reportsSub')}</p>${rs.length ? rs.map(reportCard).join('') : emptyBox('📋', t('noReports'))}`;
+  bindReportCards();
+}
+async function viewAssess(){
+  const as = await fetchAssessments();
+  $('appmain').innerHTML = `<h1 class="page-title">${t('assessTitle')}</h1><p class="page-sub">${t('assessSub')}</p>${as.length ? `<div class="table-wrap"><table><thead><tr><th>${t('colName')}</th><th>${t('colClass')}</th><th>${t('colScore')}</th><th>${t('colLevel')}</th><th>${t('colDate')}</th></tr></thead><tbody>${as.map(a=>{ const col = a.level==='good'?'#66e29a':a.level==='moderate'?'#7fb0ff':a.level==='low'?'#ffc76b':'#ff8fa3'; return `<tr><td style="font-weight:700;color:#e8f1ff">${esc(a.student_name)}</td><td>${esc(a.class_name||'—')}</td><td style="font-weight:800;color:${col}">${a.total}/60</td><td><span style="color:${col};font-weight:700;font-size:12.5px">${esc(a.label)}</span></td><td style="color:var(--dim);font-size:12px">${new Date(a.created_at).toLocaleString()}</td></tr>`; }).join('')}</tbody></table></div>` : emptyBox('🧠', t('noAssess'))}`;
+}
+
+function openModal(html){ $('modalBox').innerHTML = `<button class="icon-btn modal-close" onclick="closeModal()">✕</button>` + html; $('modal').classList.add('on'); }
+function closeModal(){ $('modal').classList.remove('on'); }
+$('modal').addEventListener('click', e=>{ if(e.target===$('modal')) closeModal(); });
+
+async function boot(){
+  state.verify = newVerify();
+  const splashDelay = new Promise(r=>setTimeout(r, 1600));
+  const sessionCheck = (async()=>{ const {data:{session}} = await sb.auth.getSession(); if(!session) return null; const {data:prof} = await sb.from('profiles').select('*').eq('id', session.user.id).single(); return prof; })();
+  const [, prof] = await Promise.all([splashDelay, sessionCheck]);
+  if(prof){ state.user = {id:prof.id, name:prof.name, email:prof.email, role:prof.role, className:prof.class_name}; await enterApp(); }
+  else { showScreen('auth'); renderAuth(); }
+}
+boot();
+
+</script>
+</body>
+</html>
